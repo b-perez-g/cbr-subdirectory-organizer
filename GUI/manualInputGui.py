@@ -5,6 +5,7 @@ from PIL import Image, ImageTk
 import tkinter as tk
 from tkinter import ttk
 from utils.tools import log_message, write_new_line
+import re
 
 def manual_input_gui(pdf_path, submission_number, CBR):
     """
@@ -89,6 +90,13 @@ def manual_input_gui(pdf_path, submission_number, CBR):
                 return
             new_dir_name = f"{submission_number}_{CBR}_{process_number}"
             new_dir_path = os.path.join(os.path.dirname(pdf_dir), new_dir_name)
+            print(old_dir_name, "/", new_dir_name)
+            # Verificar si el nuevo nombre es igual al anterior
+            if new_dir_name == old_dir_name:
+                write_new_line(f"{root_dir}/control de cambios.csv", [new_dir_name, new_dir_name, datetime.now().strftime('%Y-%m-%d %H:%M:%S')])
+                log_message(f"El nombre de la carpeta no ha cambiado: {new_dir_name}")
+                root.destroy()
+                return
 
             suffix_counter = 1
             while os.path.exists(new_dir_path):
@@ -108,6 +116,14 @@ def manual_input_gui(pdf_path, submission_number, CBR):
         def guardar_sin_numero():
             new_dir_name = f"{submission_number}_{CBR}_SN1"
             new_dir_path = os.path.join(os.path.dirname(pdf_dir), new_dir_name)
+
+            # Verificar si el nombre termina con _SN seguido de uno o más dígitos
+            sn_pattern = re.compile(rf"{submission_number}_{CBR}_SN\d+$")
+            if sn_pattern.match(old_dir_name):
+                write_new_line(f"{root_dir}/control de cambios.csv", [old_dir_name, old_dir_name, datetime.now().strftime('%Y-%m-%d %H:%M:%S')])
+                log_message(f"El nombre de la carpeta no ha cambiado: {old_dir_name}")
+                root.destroy()
+                return
 
             suffix_counter = 1
             while os.path.exists(new_dir_path):
