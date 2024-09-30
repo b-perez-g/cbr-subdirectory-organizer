@@ -54,7 +54,7 @@ def manual_input_gui(pdf_path, submission_number, CBR):
         image_canvas.create_window((0, 0), window=image_container, anchor="n")
 
         # Cargar y mostrar imágenes del PDF
-        images = convert_from_path(pdf_path)
+        images = convert_from_path(pdf_path, dpi=72)
         for img in images:
             img_width = int(screen_width * 0.75)
             img_height = int(img_width * (img.height / img.width))
